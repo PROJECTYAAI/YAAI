@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>YAAI</title>
+</head>
+<body style="margin:0;overflow:hidden;background:black;font-family:monospace">
+
+<div id="skip" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+background:white;color:black;padding:35px 70px;border:6px solid red;
+box-shadow:0 0 50px red;font-size:34px;font-weight:bold;cursor:pointer;z-index:99999;text-align:center">
+INITIALIZE SEQUENCE<br><span style="font-size:20px">CLICK TO BEGIN</span>
+</div>
+
+<script>
+let started=0,texts=[],audio;
+
+const msgs=["// signal detected","// system unstable","// unknown presence","// memory drift","// interface corruption"];
+const fonts=["Arial","Courier New","Impact","Verdana","Georgia"];
+
+function fs(){
+document.documentElement.requestFullscreen?.();
+}
+
+function start(){
+if(started)return;
+started=1;
+
+fs();
+document.getElementById("skip").remove();
+
+audio=new Audio("https://www.myinstants.com/media/sounds/you-are-an-idiot.mp3");
+audio.loop=true;
+audio.volume=0.8;
+audio.play();
+
+for(let i=0;i<12;i++){
+let d=document.createElement("div");
+d.style.position="absolute";
+d.style.color="white";
+d.style.fontSize=(20+Math.random()*35)+"px";
+d.style.fontFamily=fonts[Math.random()*fonts.length|0];
+d.style.textShadow="0 0 10px red";
+d.innerHTML=msgs[Math.random()*msgs.length|0];
+document.body.appendChild(d);
+
+texts.push({
+el:d,
+x:Math.random()*innerWidth,
+y:Math.random()*innerHeight,
+dx:(Math.random()*6-3),
+dy:(Math.random()*6-3)
+});
+}
+
+function move(){
+for(let t of texts){
+t.x+=t.dx;t.y+=t.dy;
+if(t.x<0||t.x>innerWidth-200)t.dx*=-1;
+if(t.y<0||t.y>innerHeight-80)t.dy*=-1;
+t.el.style.left=t.x+"px";
+t.el.style.top=t.y+"px";
+}
+requestAnimationFrame(move);
+}
+move();
+
+setInterval(()=>{
+let p=document.createElement("div");
+p.style.position="fixed";
+p.style.left=Math.random()*80+"%";
+p.style.top=Math.random()*80+"%";
+p.style.background="black";
+p.style.color="red";
+p.style.border="1px solid red";
+p.style.padding="15px";
+p.style.zIndex=999999;
+p.innerHTML="system instability detected";
+document.body.appendChild(p);
+setTimeout(()=>p.remove(),2000);
+},1200);
+
+document.addEventListener("fullscreenchange",()=>{
+if(!document.fullscreenElement){
+audio.playbackRate=0.5;
+}
+});
+}
+
+document.getElementById("skip").addEventListener("pointerdown",start,{once:true});
+</script>
+
+</body>
+</html>
